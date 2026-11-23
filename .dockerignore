@@ -1,0 +1,11 @@
+.git
+**/.DS_Store
+**/__pycache__
+# Sounds are composed inside the image
+lua/vimquest/sfx/*.wav
+# The local-only files from .gitignore, matched in any folder as git does
+**/tags
+**/test.sh
+**/.luarc.json
+**/nvim
+**/spell/

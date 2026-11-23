@@ -25,6 +25,32 @@ The installer:
 
 Running the installer again updates an existing VimQuest install.
 
+### Or try it in Docker
+
+Want to look around before installing anything? Run VimQuest in a container. Nothing is installed on your
+computer and your own Neovim config is never touched:
+
+```sh
+docker build -t vimquest https://github.com/MuhammadWaleed-Animations/VimQuest.git
+docker run -it --rm -v vimquest-save:/home/vimquest/save vimquest
+```
+
+The first command takes a few minutes, once. After that the second one starts in seconds, and `vimquest-save`
+keeps your progress between runs. Your terminal still needs a Nerd Font for the icons (see step 1 below).
+
+**Sound (Linux):** run it like this instead, so the game can reach your speakers. On macOS the game plays without
+sound in Docker.
+
+```sh
+docker run -it --rm -v vimquest-save:/home/vimquest/save \
+  -e PULSE_SERVER=unix:/tmp/pulse.sock \
+  --mount type=bind,src="$XDG_RUNTIME_DIR/pulse/native",dst=/tmp/pulse.sock \
+  vimquest
+```
+
+**Remove it all:** `docker rmi vimquest && docker volume rm vimquest-save`, then `docker builder prune` to clear
+Docker's build cache.
+
 ## Start playing
 
 Never opened Neovim before? Here's exactly what to do after installing:

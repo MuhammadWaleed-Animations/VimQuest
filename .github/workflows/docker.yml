@@ -1,0 +1,48 @@
+name: Docker
+
+# Only runs when something that changes the image's setup changes
+on:
+  push:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - init.lua
+      - nvim-pack-lock.json
+      - lua/custom/**
+      - lua/kickstart/**
+      - lua/vimquest/sfx/generate.py
+      - scripts/**
+      - tests/run.sh
+      - .github/workflows/docker.yml
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - init.lua
+      - nvim-pack-lock.json
+      - lua/custom/**
+      - lua/kickstart/**
+      - lua/vimquest/sfx/generate.py
+      - scripts/**
+      - tests/run.sh
+      - .github/workflows/docker.yml
+
+jobs:
+  image:
+    name: Build and play in Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # The build itself fails if a language server or parser did not install (scripts/docker_check.lua)
+      - name: Build the image
+        run: docker build -t vimquest .
+
+      - name: Start offline with everything installed
+        run: docker run --rm --network none vimquest --headless -c 'luafile .config/nvim/scripts/docker_check.lua'
+
+      - name: Run the test suite inside the image
+        env:
+          VQ_SLOW: '2'
+        run: docker run --rm -e VQ_SLOW --entrypoint .config/nvim/tests/run.sh vimquest
